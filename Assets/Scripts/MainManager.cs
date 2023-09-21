@@ -1,5 +1,7 @@
+using Microsoft.SqlServer.Server;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,6 +13,7 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text bestScore;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -36,6 +39,9 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        GameManager.Instance.LoadData();
+        bestScore.text = string.Format($"Best Score : {GameManager.Instance.BestPlayerName} : {GameManager.Instance.BestScore}");
     }
 
     private void Update()
@@ -71,6 +77,11 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         m_GameOver = true;
+        bestScore.text = string.Format($"Best Score : {GameManager.Instance.PlayerName} : {m_Points}");
+        if(GameManager.Instance.BestScore < m_Points)
+        {
+            GameManager.Instance.SavePlayerData(m_Points);
+        }        
         GameOverText.SetActive(true);
     }
 }
